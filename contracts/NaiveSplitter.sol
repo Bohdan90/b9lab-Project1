@@ -6,7 +6,7 @@ contract NaiveSplitter {
   mapping(address => uint) private ownedMoney;
 
   constructor (address first, address second){
-    require(recipient1 != 0 && recipient2 != 0);
+    require(first != 0 && second != 0);
     recipient1 = first;
     recipient2 = second;
   }
