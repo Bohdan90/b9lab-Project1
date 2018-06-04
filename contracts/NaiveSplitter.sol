@@ -18,6 +18,7 @@ contract NaiveSplitter is Stoppable,Destroyable{
     require(ownedMoney [msg.sender] > 0);
     emit LogMoneyTransfering(ownedMoney[msg.sender], msg.sender);
     msg.sender.transfer(ownedMoney[msg.sender]);
+    ownedMoney[msg.sender] = 0;
   }
 
   function splitFunds(address first, address second) onlyIfRunning public payable returns (bool success) {
