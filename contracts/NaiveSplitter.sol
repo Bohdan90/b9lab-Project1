@@ -1,27 +1,30 @@
 pragma solidity ^0.4.4;
+import './Destroyable.sol';
+import './Stoppable.sol';
 
-contract NaiveSplitter {
-  address public recipient1;
-  address public recipient2;
+contract NaiveSplitter is Stoppable,Destroyable{
+
   mapping(address => uint) private ownedMoney;
+  address public owner;
+  event LogMoneyTransfering(uint,address);
 
-  constructor (address first, address second){
-    require(first != 0 && second != 0);
-    recipient1 = first;
-    recipient2 = second;
+  constructor(){
+    owner = msg.sender;
   }
 
-  function sendMoney() public {
-    require(recipient1 == msg.sender || recipient2 == msg.sender);
+  function withdrawFunds() public {
     require(ownedMoney [msg.sender] > 0);
+    emit LogMoneyTransfering(ownedMoney[msg.sender], msg.sender);
     msg.sender.transfer(ownedMoney[msg.sender]);
   }
 
-  function splitFunds() public payable returns (bool success) {
+  function splitFunds(address first, address second) onlyIfRunning public payable returns (bool success) {
+    require(first != 0 && second != 0);
     require(msg.value > 0);
-    uint256 amount = msg.value / 2;
-    ownedMoney [recipient1] += amount;
-    ownedMoney [recipient2] += amount;
+    //Since we can have the remainder of the division, I think it's better to operate with the balance of the contract itself.Sooner or later, the sum will be even.
+    uint256 amount = this.balance / 2;
+    ownedMoney [first] += amount;
+    ownedMoney [second] += amount;
     return true;
   }
 }
