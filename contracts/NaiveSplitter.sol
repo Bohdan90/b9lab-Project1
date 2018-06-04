@@ -6,7 +6,9 @@ contract NaiveSplitter is Stoppable,Destroyable{
 
   mapping(address => uint) private ownedMoney;
   address public owner;
-  event LogMoneyTransfering(uint,address);
+  event LogMoneyTransfering(uint amount,address to);
+  event LogSplitFunds (address sender, uint amount, address firstReceiver, address secondReceiver);
+
 
   constructor(){
     owner = msg.sender;
@@ -25,6 +27,7 @@ contract NaiveSplitter is Stoppable,Destroyable{
     uint256 amount = this.balance / 2;
     ownedMoney [first] += amount;
     ownedMoney [second] += amount;
+    emit LogSplitFunds(msg.sender,amount,first,second);
     return true;
   }
 }
